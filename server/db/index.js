@@ -40,7 +40,7 @@ myshopdb.findProductById = (id) => {
 myshopdb.newProduct = (product) => {
 
     return new Promise((resolve, reject) => {
-        pool.query(`INSERT INTO products(product_name, product_quantity) VALUES (?,?)`, [product.name, product.quantity], (err, results) => {
+        pool.query(`INSERT INTO products(product_name, product_quantity, product_details, product_price) VALUES (?,?,?,?)`, [product.name, product.quantity, product_details, product_price], (err, results) => {
             if (err) {
                 return reject(err);
             }
