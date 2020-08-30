@@ -50,17 +50,18 @@ myshopdb.newProduct = (product) => {
 
 };
 
-// myshopdb.updateProduct = (id, body) => {
+myshopdb.updateProduct = (id, product) => {
 
-//     return new Promise((resolve, reject) => {
-//         pool.query(`UPDATE products set WHERE product_id = `, [id], (err, results) => {
-//             if(err){
-//                 return reject(err);
-//             }
-//             return resolve(results);
-//         })
-//     })
-// }
+    return new Promise((resolve, reject) => {
+        pool.query(`UPDATE products SET product_name = ?, product_quantity = ?, product_details = ?, product_price = ? WHERE product_id = ?`, [product.product_name, product.product_quantity, product.product_details, product.product_price, id], (err, results) => {
+            if (err) {
+                return reject(err);
+            }
+            return resolve(results);
+        })
+    });
+
+};
 
 myshopdb.removeProduct = (id) => {
 

@@ -33,16 +33,16 @@ router.post('/', async (req, res, next) => {
     }
 });
 
-// router.put('/:id', async (req, res, next) => {
-//     try {
-//         let product = await db.updateProduct(req.params.id, req.body);
-//         if (product === undefined) { res.sendStatus(404); }
-//         res.json(product);
-//     } catch (error) {
-//         console.log(error);
-//         res.sendStatus(500);
-//     }
-// });
+router.put('/:product_id', async (req, res, next) => {
+    try {
+        let product = await db.updateProduct(req.params.product_id, req.body);
+        if (product === undefined) { res.sendStatus(404); }
+        res.sendStatus(200);
+    } catch (error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
+});
 
 router.delete('/:id', async (req, res, next) => {
     try {
