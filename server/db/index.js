@@ -37,6 +37,20 @@ myshopdb.findProductById = (id) => {
 
 };
 
+myshopdb.findProductByName = (name) => {
+    name = '%' + name + '%';
+
+    return new Promise((resolve, reject) => {
+        pool.query(`SELECT * FROM products WHERE product_name LIKE ?`, [name], (err, results) => {
+            if (err) {
+                return reject(err);
+            }
+            return resolve(results);
+        })
+    });
+
+};
+
 myshopdb.newProduct = (product) => {
 
     return new Promise((resolve, reject) => {

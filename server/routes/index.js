@@ -23,6 +23,17 @@ router.get('/:id', async (req, res, next) => {
     }
 });
 
+router.get('/search/:name', async (req, res, next) => {
+    try {
+        let product = await db.findProductByName(req.params.name);
+        if (product === undefined) { res.sendStatus(404); }
+        res.json(product);
+    } catch (error) {
+        console.log(error);
+        res.sendStatus(500);
+    }
+});
+
 router.post('/', async (req, res, next) => {
     try {
         await db.newProduct(req.body);
