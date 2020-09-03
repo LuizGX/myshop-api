@@ -78,14 +78,11 @@ router.delete('/products/:id', async (req, res, next) => {
 /*                                      LOGIN                                        */
 /*********************************************************************************** */
 
-router.post('/login', verifyToken, async (req, res, next) => {
-    const user = {
-        id: 1,
-        username: 'name',
-        email: 'email@email.com'
-    }
+router.post('/login', async (req, res, next) => {
+    console.log(req.body);
 
-    jwt.sign({ user: user }, 'secretkey', (err, token) => {
+    jwt.sign(req.body, 'secretkey', (err, token) => {
+        console.log("deu certo");
         res.json({
             token: token
         })
