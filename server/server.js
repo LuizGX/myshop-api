@@ -14,7 +14,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use('/api/products', apiRouter);
+app.use('/api', apiRouter);
 
 app.listen(3000, () => {
     console.log('Server running on port 3000...');

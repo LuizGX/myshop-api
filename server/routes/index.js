@@ -1,8 +1,11 @@
 const express = require('express');
 const db = require('../db');
+const jwt = require('jsonwebtoken');
 const router = express.Router();
-
-router.get('/', async (req, res, next) => {
+/*********************************************************************************** */
+/*                                      PRODUTOS                                     */
+/*********************************************************************************** */
+router.get('/products/', async (req, res, next) => {
     try {
         let allProducts = await db.fetchAllProducts();
         res.json(allProducts);
@@ -12,7 +15,7 @@ router.get('/', async (req, res, next) => {
     }
 });
 
-router.get('/:id', async (req, res, next) => {
+router.get('/products/:id', async (req, res, next) => {
     try {
         let product = await db.findProductById(req.params.id);
         if (product === undefined) { res.sendStatus(404); }
@@ -23,7 +26,7 @@ router.get('/:id', async (req, res, next) => {
     }
 });
 
-router.get('/search/:name', async (req, res, next) => {
+router.get('/products/search/:name', async (req, res, next) => {
     try {
         let product = await db.findProductByName(req.params.name);
         if (product === undefined) { res.sendStatus(404); }
@@ -34,17 +37,23 @@ router.get('/search/:name', async (req, res, next) => {
     }
 });
 
-router.post('/', async (req, res, next) => {
+router.post('/products/', verifyToken, (req, res, next) => {
     try {
-        await db.newProduct(req.body);
-        res.sendStatus(200);
+        jwt.verify(req.token, 'secretkey', async (err, authData) => {
+            if (err) {
+                res.sendStatus(403);
+            } else {
+                await db.newProduct(req.body);
+                res.sendStatus(200);
+            }
+        });
     } catch (error) {
         console.log(error);
         res.sendStatus(500);
     }
 });
 
-router.put('/:product_id', async (req, res, next) => {
+router.put('/products/:product_id', async (req, res, next) => {
     try {
         let product = await db.updateProduct(req.params.product_id, req.body);
         if (product === undefined) { res.sendStatus(404); }
@@ -55,7 +64,7 @@ router.put('/:product_id', async (req, res, next) => {
     }
 });
 
-router.delete('/:id', async (req, res, next) => {
+router.delete('/products/:id', async (req, res, next) => {
     try {
         await db.removeProduct(req.params.id);
         res.sendStatus(200);
@@ -65,4 +74,33 @@ router.delete('/:id', async (req, res, next) => {
     }
 })
 
+/*********************************************************************************** */
+/*                                      LOGIN                                        */
+/*********************************************************************************** */
+
+router.post('/login', verifyToken, async (req, res, next) => {
+    const user = {
+        id: 1,
+        username: 'name',
+        email: 'email@email.com'
+    }
+
+    jwt.sign({ user: user }, 'secretkey', (err, token) => {
+        res.json({
+            token: token
+        })
+    });
+});
+
+function verifyToken(req, res, next) {
+    const bearerHeader = req.headers['authorization'];
+    if (typeof bearerHeader !== 'undefined') {
+        const bearer = bearerHeader.split(' ');
+        const bearerToken = bearer[1];
+        req.token = bearerToken;
+        next();
+    } else {
+        res.sendStatus(403);
+    }
+}
 module.exports = router;
